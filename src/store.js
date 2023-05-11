@@ -5,11 +5,15 @@ import { generateId } from './utils';
  */
 class Store {
   constructor(initState = {}) {
+    if (Array.from(new Set(initState.list.map((item) => item.code))).length !== initState.list.length) {
+      throw "code should be unique";
+    }
+
     this.state = initState;
     this.listeners = []; // Слушатели изменений состояния
+    this.lastCode = [...initState.list].sort((a, b) => b.code - a.code)[0].code; // Получаем наибольший(последний) код элемента
   }
 
-  
   /**
    * Подписка слушателя на изменения состояния
    * @param listener {Function}
@@ -19,8 +23,8 @@ class Store {
     this.listeners.push(listener);
     // Возвращается функция для удаления добавленного слушателя
     return () => {
-      this.listeners = this.listeners.filter(item => item !== listener);
-    }
+      this.listeners = this.listeners.filter((item) => item !== listener);
+    };
   }
 
   /**
@@ -47,9 +51,12 @@ class Store {
   addItem() {
     this.setState({
       ...this.state,
-      list: [...this.state.list, {code: generateId(), title: 'Новая запись'}]
-    })
-  };
+      list: [
+        ...this.state.list,
+        { code: ++this.lastCode, title: "Новая запись" },
+      ],
+    });
+  }
 
   /**
    * Удаление записи по коду
@@ -58,9 +65,9 @@ class Store {
   deleteItem(code) {
     this.setState({
       ...this.state,
-      list: this.state.list.filter(item => item.code !== code)
-    })
-  };
+      list: this.state.list.filter((item) => item.code !== code),
+    });
+  }
 
   /**
    * Выделение записи по коду
@@ -69,7 +76,7 @@ class Store {
   selectItem(code) {
     this.setState({
       ...this.state,
-      list: this.state.list.map(item => {
+      list: this.state.list.map((item) => {
         if (item.code === code) {
           item.selected = !item.selected;
           if (item.selected) {
@@ -82,8 +89,8 @@ class Store {
           item.selected = false;
         }
         return item;
-      })
-    })
+      }),
+    });
   }
 }
 

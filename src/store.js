@@ -1,17 +1,13 @@
-import { generateId } from './utils';
+import {generateCode} from "./utils";
 
 /**
  * Хранилище состояния приложения
  */
 class Store {
   constructor(initState = {}) {
-    if (Array.from(new Set(initState.list.map((item) => item.code))).length !== initState.list.length) {
-      throw "code should be unique";
-    }
-
     this.state = initState;
+    this.choosenProducts = {};
     this.listeners = []; // Слушатели изменений состояния
-    this.lastCode = [...initState.list].sort((a, b) => b.code - a.code)[0].code; // Получаем наибольший(последний) код элемента
   }
 
   /**
@@ -23,8 +19,8 @@ class Store {
     this.listeners.push(listener);
     // Возвращается функция для удаления добавленного слушателя
     return () => {
-      this.listeners = this.listeners.filter((item) => item !== listener);
-    };
+      this.listeners = this.listeners.filter(item => item !== listener);
+    }
   }
 
   /**
@@ -51,12 +47,9 @@ class Store {
   addItem() {
     this.setState({
       ...this.state,
-      list: [
-        ...this.state.list,
-        { code: ++this.lastCode, title: "Новая запись" },
-      ],
-    });
-  }
+      list: [...this.state.list, {code: generateCode(), title: 'Новая запись'}]
+    })
+  };
 
   /**
    * Удаление записи по коду
@@ -65,9 +58,10 @@ class Store {
   deleteItem(code) {
     this.setState({
       ...this.state,
-      list: this.state.list.filter((item) => item.code !== code),
-    });
-  }
+      // Новый список, в котором не будет удаляемой записи
+      list: this.state.list.filter(item => item.code !== code)
+    })
+  };
 
   /**
    * Выделение записи по коду
@@ -76,21 +70,42 @@ class Store {
   selectItem(code) {
     this.setState({
       ...this.state,
-      list: this.state.list.map((item) => {
+      list: this.state.list.map(item => {
         if (item.code === code) {
-          item.selected = !item.selected;
-          if (item.selected) {
-            if (!item.selectCount) {
-              item.selectCount = 0;
-            }
-            item.selectCount++;
-          }
-        } else {
-          item.selected = false;
+          // Смена выделения и подсчёт
+          return {
+            ...item,
+            selected: !item.selected,
+            count: item.selected ? item.count : item.count + 1 || 1,
+          };
         }
-        return item;
-      }),
-    });
+        // Сброс выделения если выделена
+        return item.selected ? {...item, selected: false} : item;
+      })
+    })
+  }
+
+  setChoosenProducts(newState) {
+    this.choosenProducts = newState;
+  }
+
+  getChoosenProducts () {
+    return this.choosenProducts;
+  }
+
+  addProduct(product) {
+    if (this.getChoosenProducts()[product.code]) {
+      this.setChoosenProducts({
+        ...this.choosenProducts, [product.code]: {...product, count: this.getChoosenProducts()[product.code].count + 1}
+      })
+
+    } else {
+      this.setChoosenProducts({
+        ...this.choosenProducts,  [product.code]: {...product, count: 1}
+      })
+    }
+   
+
   }
 }
 

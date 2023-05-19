@@ -6,14 +6,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0,0,0,0.7);
     position: fixed;
     transform: scale(0);
 }
 
 .modal__content {
-    border-radius: 10px;
     background-color: white;
+    border-radius: 10px;
+
+
 }
 
 .modal.active {

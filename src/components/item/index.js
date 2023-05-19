@@ -12,7 +12,7 @@ function Item(props){
       <div className="Item-actions">
         <div className="Item-price">{`${props.item.price} ₽`}</div>
         {props.item.count && <div className="Item-counts">{`${props.item.count} шт`}</div>}
-        <button onClick={()=> props.btnCallback(props.item)}>{props.btnsTitle}</button>
+        <button className="Item-btn" onClick={()=> props.btnCallback(props.item)}>{props.btnsTitle}</button>
       </div>
     </div>
   );

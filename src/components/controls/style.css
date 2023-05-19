@@ -1,5 +1,20 @@
 .Controls {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   padding: 20px;
+}
+
+.Controls__backet-info {
+  margin-right: 20px;
+}
+
+.Controls__price {
+  margin-left: 15px;
+  font-weight: 700;
+}
+
+.Controls__close-btn {
+  height: 20px;
+  width: 80px;
 }

@@ -1,4 +1,4 @@
-import {generateCode} from "./utils";
+import {generateCode, getPropertySum, getPrice} from "./utils";
 
 /**
  * Хранилище состояния приложения
@@ -87,10 +87,24 @@ class Store {
 
   setChoosenProducts(newState) {
     this.choosenProducts = newState;
+
   }
 
   getChoosenProducts () {
     return this.choosenProducts;
+  }
+
+  getProductsCount() {
+    return getPropertySum(this.choosenProducts, 'count');
+  }
+
+  getProductsPrice() {
+    return getPrice(this.choosenProducts, 'price');
+  }
+
+  deleteProduct(product) {
+    delete this.choosenProducts[product.code];
+    console.log(this.choosenProducts)
   }
 
   addProduct(product) {

@@ -58,3 +58,29 @@ export function generateCode2() {
 export function generateId() {
   return Math.floor(Math.random() * 10000000000);  ;
 }
+
+/**
+ * Создание элемента со свойствами и вложенными элементами
+ * @returns {number}
+ */
+
+ export function getPropertySum(obj, propName) {
+  let sum = 0;
+  for (let prop in obj) {
+    sum += obj[prop][propName];
+  }
+  return sum;
+}
+
+/**
+ * Создание элемента со свойствами и вложенными элементами
+ * @returns {number}
+ */
+
+ export function getPrice(obj, propName) {
+  let sum = 0;
+  for (let prop in obj) {
+    sum += obj[prop][propName] * obj[prop].count;
+  }
+  return sum;
+}

@@ -4,6 +4,8 @@ import Controls from "./components/controls";
 import Head from "./components/head";
 import PageLayout from "./components/page-layout";
 import Modal from './components/modal/index';
+import Basket from './components/basket/index';
+
 
 /**
  * Приложение
@@ -12,44 +14,41 @@ import Modal from './components/modal/index';
  */
 function App({store}) {
   const [modalActive, setModalActive] = useState(false);
+  const [choosenProducts, setChoosenProduct] = useState(Object.values(store.getChoosenProducts()));
+  const [count, setCount] = useState(0);
+  const [price, setPrice] = useState(0);
   const list = store.getState().list;
-
+  
   const callbacks = {
-    onDeleteItem: useCallback(
-      (code) => {
-        store.deleteItem(code);
+    onDeleteProduct: useCallback((product) => {
+        store.deleteProduct(product);
+        setChoosenProduct(Object.values(store.getChoosenProducts()));
+        setCount(store.getProductsCount());
+        setPrice(store.getProductsPrice());
       },
       [store]
     ),
-
-    onSelectItem: useCallback(
-      (code) => {
-        store.selectItem(code);
-      },
-      [store]
-    ),
-
-    onAddItem: useCallback(() => {
-      store.addItem();
-    }, [store]),
 
     onAddProduct: useCallback((product) => {
         store.addProduct(product);
+        setChoosenProduct(Object.values(store.getChoosenProducts()));
+        setCount(store.getProductsCount());
+        setPrice(store.getProductsPrice());
     }, [store]),
   };
 
   return (
     <>
       <PageLayout>
-        <Head title="Приложение на чистом JS" />
-        <Controls setActive={setModalActive} />
+        <Head title="Магазин" />
+        <Controls setActive={setModalActive} productsCount={count} productsPrice={price}/>
         <List
           list={list}
-          onDeleteItem={callbacks.onDeleteItem}
-          onAddProduct={callbacks.onAddProduct}
+          btnCallback={callbacks.onAddProduct}
+          btnsTitle={'Добавить'}
         />
       </PageLayout>
-      <Modal active={modalActive} setActive={setModalActive}></Modal> 
+      <Modal active={modalActive} setActive={setModalActive}><Basket list={choosenProducts} btnCallback={callbacks.onDeleteProduct} btnsTitle={'Удалить'} setActive={setModalActive} price={price}></Basket></Modal>
     </>
   );
 }

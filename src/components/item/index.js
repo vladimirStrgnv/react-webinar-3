@@ -4,25 +4,15 @@ import {plural} from "../../utils";
 import './style.css';
 
 function Item(props){
-
-  // Счётчик выделений
-  const [count, setCount] = useState(0);
-
-  const callbacks = {
-    onClick: () => {
-      props.onSelect(props.item.code);
-      if (!props.item.selected) {
-        setCount(count + 1);
-      }
-    }
-  }
+  
   return (
     <div className={"Item"} >
       <div className="Item-code">{props.item.code}</div>
       <div className="Item-title">{props.item.title}</div>
       <div className="Item-actions">
         <div className="Item-price">{`${props.item.price} ₽`}</div>
-        <button onClick={()=> props.onAdd(props.item)}>Добавить</button>
+        {props.item.count && <div className="Item-counts">{`${props.item.count} шт`}</div>}
+        <button onClick={()=> props.btnCallback(props.item)}>{props.btnsTitle}</button>
       </div>
     </div>
   );

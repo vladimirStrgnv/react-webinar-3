@@ -1,4 +1,4 @@
-import {generateCode, getPropertySum, getPrice} from "./utils";
+import { generateCode } from "./utils";
 
 /**
  * Хранилище состояния приложения
@@ -6,8 +6,9 @@ import {generateCode, getPropertySum, getPrice} from "./utils";
 class Store {
   constructor(initState = {}) {
     this.state = initState;
-    this.choosenProducts = {};
-    this.listeners = []; // Слушатели изменений состояния
+    this.totalPrice = 0;
+    this.products = [];
+    this.listeners = [];
   }
 
   /**
@@ -19,8 +20,8 @@ class Store {
     this.listeners.push(listener);
     // Возвращается функция для удаления добавленного слушателя
     return () => {
-      this.listeners = this.listeners.filter(item => item !== listener);
-    }
+      this.listeners = this.listeners.filter((item) => item !== listener);
+    };
   }
 
   /**
@@ -44,82 +45,76 @@ class Store {
   /**
    * Добавление новой записи
    */
+
   addItem() {
     this.setState({
       ...this.state,
-      list: [...this.state.list, {code: generateCode(), title: 'Новая запись'}]
-    })
-  };
+      list: [
+        ...this.state.list,
+        { code: generateCode(), title: "Новая запись" },
+      ],
+    });
+  }
 
   /**
    * Удаление записи по коду
    * @param code
    */
   deleteItem(code) {
+    const list = this.state.list.filter((item) => item.code !== code);
+    const newList = list.map((item) => {
+      if (item.code > code) {
+        item.code--;
+      }
+      return item;
+    });
     this.setState({
       ...this.state,
       // Новый список, в котором не будет удаляемой записи
-      list: this.state.list.filter(item => item.code !== code)
-    })
-  };
-
-  /**
-   * Выделение записи по коду
-   * @param code
-   */
-  selectItem(code) {
-    this.setState({
-      ...this.state,
-      list: this.state.list.map(item => {
-        if (item.code === code) {
-          // Смена выделения и подсчёт
-          return {
-            ...item,
-            selected: !item.selected,
-            count: item.selected ? item.count : item.count + 1 || 1,
-          };
-        }
-        // Сброс выделения если выделена
-        return item.selected ? {...item, selected: false} : item;
-      })
-    })
+      list: this.state.list.filter((item) => item.code !== code),
+    });
   }
 
-  setChoosenProducts(newState) {
-    this.choosenProducts = newState;
-
+  setTotalPrice(newTotalPrice) {
+    this.totalPrice = newTotalPrice;
+    for (const listener of this.listeners) listener();
   }
 
-  getChoosenProducts () {
-    return this.choosenProducts;
+  setProducts(newProducts) {
+    this.products = newProducts;
+    for (const listener of this.listeners) listener();
   }
 
-  getProductsCount() {
-    return getPropertySum(this.choosenProducts, 'count');
+  deleteProduct(deletedProduct) {
+    this.products.map((product) => {
+      if (product.code === deletedProduct.code) {
+        this.setTotalPrice(this.totalPrice - deletedProduct.price * product.count);
+      }
+    });
+    this.setProducts(
+      this.products.filter((product) => product.code !== deletedProduct.code)
+    );
   }
 
-  getProductsPrice() {
-    return getPrice(this.choosenProducts, 'price');
-  }
+  addProduct(newProduct) {
+    const isNewProduct = this.products.find(
+      (product) => product.code === newProduct.code
+    );
 
-  deleteProduct(product) {
-    delete this.choosenProducts[product.code];
-    console.log(this.choosenProducts)
-  }
-
-  addProduct(product) {
-    if (this.getChoosenProducts()[product.code]) {
-      this.setChoosenProducts({
-        ...this.choosenProducts, [product.code]: {...product, count: this.getChoosenProducts()[product.code].count + 1}
-      })
-
+    if (!isNewProduct) {
+      this.setProducts([...this.products, { ...newProduct, count: 1 }]);
+      this.setTotalPrice(this.totalPrice + newProduct.price);
     } else {
-      this.setChoosenProducts({
-        ...this.choosenProducts,  [product.code]: {...product, count: 1}
-      })
+      const newProducts = this.products.map((product) => {
+        if (product.code === newProduct.code) {
+          return { ...product, count: product.count + 1 };
+        } else {
+          return product;
+        }
+      });
+      this.setProducts(newProducts);
+      this.setTotalPrice(this.totalPrice + newProduct.price);
     }
-   
-
   }
 }
 

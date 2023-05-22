@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from 'prop-types';
+import PropTypes, { string } from 'prop-types';
 import Item from "../item";
 import './style.css';
 
@@ -16,10 +16,12 @@ function List({list, btnCallback, btnsTitle}){
 }
 
 List.propTypes = {
+  btnsTitle: PropTypes.string,
   list: PropTypes.arrayOf(PropTypes.shape({
     code: PropTypes.number
-  })).isRequired,
-  onDeleteItem: PropTypes.func,
+  }),
+  ).isRequired,
+  btnCallback: PropTypes.func,
   onSelectItem: PropTypes.func
 };
 

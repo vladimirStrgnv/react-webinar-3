@@ -2,6 +2,7 @@ import React from 'react';
 import './style.css';
 import Head from '../head/index';
 import List from '../list/index';
+import PropTypes from "prop-types";
 
 const Basket = ({list, btnsTitle, btnCallback, setActive, price}) => {
   return (
@@ -22,5 +23,14 @@ const Basket = ({list, btnsTitle, btnCallback, setActive, price}) => {
     </section>    
   )
 }
+Basket.propTypes = {
+  list: PropTypes.array,
+  btnsTitle: PropTypes.string,
+  btnCallback: PropTypes.func,
+  setActive: PropTypes.func,
+  price: PropTypes.number,
+};
+
+
 
 export default Basket;

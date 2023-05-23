@@ -9,7 +9,7 @@ function Item(props){
       <div className="Item-code">{props.item.code}</div>
       <div className="Item-title">{props.item.title}</div>
       <div className="Item-actions">
-        <div className="Item-price">{`${props.item.price} ₽`}</div>
+        <div className="Item-price">{`${Intl.NumberFormat('ru-RU').format(props.item.price)} ₽`}</div>
         {props.item.count && <div className="Item-counts">{`${props.item.count} шт`}</div>}
         <button className="Item-btn" onClick={()=> props.btnCallback(props.item)}>{props.btnsTitle}</button>
       </div>

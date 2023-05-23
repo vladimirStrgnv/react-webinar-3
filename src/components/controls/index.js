@@ -8,7 +8,7 @@ function Controls({setActive, productsCount, productsPrice}){
   return (
     <div className='Controls'>
       <p className='Controls__backet-info'>
-        В корзине:{productsCount?<span className='Controls__price'>{`${productsCount} ${declOfNum(productsCount, ['продукт', 'продукта', 'продуктов'])} / ${productsPrice} ₽`}</span>:  <span className='Controls__price'>{`пусто`}</span>}
+        В корзине:{productsCount?<span className='Controls__price'>{`${productsCount} ${declOfNum(productsCount, ['товар', 'товара', 'товаров'])} / ${Intl.NumberFormat('ru-RU').format(productsPrice)} ₽`}</span>:  <span className='Controls__price'>{`пусто`}</span>}
       </p>
       <button className="Controls__close-btn" onClick={() => setActive(true)}>Перейти</button>
     </div>

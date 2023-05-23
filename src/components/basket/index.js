@@ -18,7 +18,7 @@ const Basket = ({list, btnsTitle, btnCallback, setActive, price}) => {
         />
         <div className='basket__total-price'>
             <h2>Итого</h2>
-            <span>{`${price} ₽`}</span>
+            <span>{`${Intl.NumberFormat('ru-RU').format(price)} ₽`}</span>
         </div>
     </section>    
   )

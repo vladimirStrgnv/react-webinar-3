@@ -2,11 +2,13 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 20px;
+  padding: 2px 20px;
 }
 
 .Controls__backet-info {
   margin-right: 20px;
+  font-size: 18px;
+  line-height: 21px;
 }
 
 .Controls__price {
